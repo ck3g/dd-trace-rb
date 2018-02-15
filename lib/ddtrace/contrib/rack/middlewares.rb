@@ -86,7 +86,7 @@ module Datadog
           # value, especially during exception handling and because of that
           # we prefer using the `REQUEST_URI` if this is available.
           # NOTE: `REQUEST_URI` is Rails specific and may not apply for other frameworks
-          url = env['REQUEST_URI'] || env['PATH_INFO']
+          url = env['REQUEST_URI'] || env['ORIGINAL_FULLPATH'] || env['PATH_INFO']
           request_id = get_request_id(headers, env)
 
           request_span.resource ||= resource_name_for(env, status)
