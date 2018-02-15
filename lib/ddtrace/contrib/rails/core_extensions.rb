@@ -7,6 +7,7 @@ module Datadog
     module_function
 
     def patch_renderer
+      return @patched if @patched
       if defined?(::ActionView::TemplateRenderer) && defined?(::ActionView::PartialRenderer)
         patch_template_renderer(::ActionView::TemplateRenderer)
         patch_partial_renderer(::ActionView::PartialRenderer)
@@ -17,6 +18,7 @@ module Datadog
       else
         Datadog::Tracer.log.debug('Expected Template/Partial classes not found; template rendering disabled')
       end
+      @patched = true
     end
 
     def patch_template_renderer(klass)
@@ -140,7 +142,9 @@ module Datadog
     module_function
 
     def patch_action_controller
+      return @patched if @patched
       patch_process_action
+      @patched = true
     end
 
     def patch_process_action
@@ -186,11 +190,13 @@ module Datadog
     module_function
 
     def patch_cache_store
+      return @patched if @patched
       patch_cache_store_read
       patch_cache_store_fetch
       patch_cache_store_write
       patch_cache_store_delete
       reload_cache_store
+      @patched = true
     end
 
     def cache_store_class(k)

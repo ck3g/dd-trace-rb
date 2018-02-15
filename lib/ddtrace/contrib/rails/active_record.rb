@@ -8,6 +8,7 @@ module Datadog
       # Code used to create and handle 'mysql.query', 'postgres.query', ... spans.
       module ActiveRecord
         def self.instrument
+          return @patched if @patched
           # ActiveRecord is instrumented only if it's available
           return unless defined?(::ActiveRecord)
 
@@ -15,6 +16,7 @@ module Datadog
           ::ActiveSupport::Notifications.subscribe('sql.active_record') do |*args|
             sql(*args)
           end
+          @patched = true
         end
 
         def self.sql(_name, start, finish, _id, payload)

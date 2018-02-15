@@ -6,8 +6,10 @@ module Datadog
       # Code used to create and handle 'rails.render_template' and 'rails.render_partial' spans.
       module ActionView
         def self.instrument
+          return @patched if @patched
           # patch Rails core components
           Datadog::RailsRendererPatcher.patch_renderer
+          @patched = true
         end
 
         def self.start_render_template(payload)

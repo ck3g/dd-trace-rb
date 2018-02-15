@@ -7,8 +7,10 @@ module Datadog
       # Code used to create and handle 'rails.cache' spans.
       module ActiveSupport
         def self.instrument
+          return @patched if @patched
           # patch Rails core components
           Datadog::RailsCachePatcher.patch_cache_store
+          @patched = true
         end
 
         def self.start_trace_cache(payload)

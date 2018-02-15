@@ -7,8 +7,10 @@ module Datadog
       # Code used to create and handle 'rails.action_controller' spans.
       module ActionController
         def self.instrument
+          return @patched if @patched
           # patch Rails core components
           Datadog::RailsActionPatcher.patch_action_controller
+          @patched = true
         end
 
         def self.start_processing(payload)
